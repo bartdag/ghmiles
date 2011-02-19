@@ -1,5 +1,6 @@
-'''
-  Description of the module here.
+''' 
+  ghmiles generates a milestones model from the list of issues in a github
+  repository. 
 
   :copyright: Copyright 2011 Barthelemy Dagenais
   :license: BSD, see LICENSE for details
@@ -41,9 +42,15 @@ def get_milestones(project, milestone_regex, as_list=False):
 
     :param project: a string of the form `user/project`
     :param milestone_regex: a regular expression used to identify the labels
-    representing milestones.
+           representing milestones.
+    :param as_list: If True, generates a list of milestones. This is useful to
+           determine the total number of milestones in advance. If False, this
+           method returns a generator. Default is False.
+    :return: A generator or a list of milestones. The milestones are sorted in
+             inversed alphabetical order.
     '''
-    github = Github()
+
+    github = Github(requests_per_second=1)
     labels = get_milestone_labels(github, project, milestone_regex)
     milestones = (get_milestone(github, project, label) for
         label in labels) 

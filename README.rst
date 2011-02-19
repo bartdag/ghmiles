@@ -5,20 +5,46 @@ ghmiles - Github Milestone Generator
   Barthelemy Dagenais
 :Version: 0.1
 
-This is a python library generating a milestone model from github issues. The
-milestone model is inspired by `Trac`_.
+This is a Python library that generates a milestone model from the issues of a
+github repository. The milestone model is inspired by `Trac`_ roadmap.
 
 .. _`Trac`: http://trac.edgewall.org/
 
 Introduction
 ------------
 
-TBD
+GitHub provides an issue tracker with each repository, but unfortunately, it
+does not offer a way to track the progress of milestones (or versions) beside
+seing the issues that are closed or open. 
+
+ghmiles is a Python library that generates a milestone model from the issues in
+a GitHub repository. ghmiles can optionaly generate an HTML page similar to a
+`Trac roadmap`_. I can also pass the milestone model to a `Jinja`_ template.
+
+.. _`Trac roadmap`: http://trac.edgewall.org/roadmap
+.. _`Jinja`: http://jinja.pocoo.org/ 
 
 Installation
 ------------
 
-TBD
+The best way to install ghmiles is to use the requirements file with `pip`_:
+
+  pip install -r https://github.com/bartdag/ghmiles/raw/master/requirements.txt
+  
+This will install ghmiles and a patched version of python-github2 from github
+repositories. As soon as Bart's patch is integrated into python-github2,
+ghmiles will be available on pypi.
+
+To uninstall ghmiles and github2, just use pip:
+  
+  pip uninstall ghmiles
+  pip uninstall github2
+  rm -rf $PATH_TO_VIRTUALENV/src/ghmiles
+  rm -rf $PATH_TO_VIRTUALENV/src/github2
+
+The last two steps are required if you want to reinstall or upgrade ghmiles.
+
+.. _`pip`: http://pypi.python.org/pypi/pip
 
 Generating Milestone Model
 --------------------------
