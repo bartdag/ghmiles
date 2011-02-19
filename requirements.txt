@@ -1,0 +1,2 @@
+-e git://github.com/bartdag/ghmiles.git#egg=ghmiles
+-e git://github.com/bartdag/python-github2.git@labels#egg=github2
