@@ -38,8 +38,11 @@ ghmiles will be available on pypi.
 To uninstall ghmiles and github2, just use pip:
   
   pip uninstall ghmiles
+
   pip uninstall github2
+  
   rm -rf $PATH_TO_VIRTUALENV/src/ghmiles
+  
   rm -rf $PATH_TO_VIRTUALENV/src/github2
 
 The last two steps are required if you want to reinstall or upgrade ghmiles.
