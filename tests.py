@@ -38,8 +38,8 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertTrue(u'Write a getting started tutorial' in issues_title)
 
     def test_get_milestones_from_labels(self):
-        milestones = ghmiles.get_milestones_from_labels('bartdag/py4j',
-                ['v0.2','v0.4'], True)
+        milestones = list(ghmiles.get_milestones_from_labels('bartdag/py4j',
+                ['v0.2','v0.4']))
         self.assertEqual(milestones[0].total, 12)
         self.assertEqual(milestones[1].total, 14)
 
@@ -47,7 +47,7 @@ class TestMilestonesModel(unittest.TestCase):
         milestones = ghmiles.get_milestones_from_labels('bartdag/py4j',
                 ['v0.2','v0.1'], True)
         html = ghmiles.get_simple_html_page(milestones, 'Py4J')
-        self.assertTrue(html.startswith('<html>'))
+        self.assertTrue(html.startswith('<!DOCTYPE html PUBLIC'))
         self.assertTrue(html.endswith('</html>'))
         
 if __name__ == '__main__':
