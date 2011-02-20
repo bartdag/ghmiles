@@ -2,4 +2,5 @@
 *.pyc
 MANIFEST
 dist/
+ghmiles.egg-info/
 tags
