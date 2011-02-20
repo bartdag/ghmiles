@@ -6,9 +6,12 @@ ghmiles - Github Milestone Generator
 :Version: 0.1
 
 This is a Python library that generates a milestone model from the issues of a
-github repository. The milestone model is inspired by `Trac`_ roadmap.
+github repository. The library also generates a roadmap inspired by `Trac`_.
+See the `Py4J Roadmap`_ for an example.
 
 .. _`Trac`: http://trac.edgewall.org/
+.. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_simple_roadmap.html
+
 
 Introduction
 ------------
@@ -19,7 +22,7 @@ listing all issues that are closed or open.
 
 ghmiles is a Python library that generates a milestone model from the issues in
 a GitHub repository. ghmiles can optionaly generate an HTML page similar to a
-`Trac roadmap`_. 
+`Trac roadmap`_. See the `Py4J Roadmap`_ for an example of a generated roadmap.
 
 A milestone is a list of issues having the same label. The progress of a
 milestone is obtained by dividing the number of closed issues by the number of
@@ -29,40 +32,89 @@ Users of ghmiles can specify which labels identify a milestone by providing a
 regular expression. 
 
 .. _`Trac roadmap`: http://trac.edgewall.org/roadmap
+.. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_simple_roadmap.html
 
 Installation
 ------------
 
-The best way to install ghmiles is to use the requirements file with `pip`_:
-
-  pip install -r https://github.com/bartdag/ghmiles/raw/master/requirements.txt
-  
-This will install ghmiles and a patched version of python-github2 from github
-repositories. As soon as Bart's patch is integrated into python-github2,
-ghmiles will be available on pypi.
-
-To uninstall ghmiles and github2, just use pip:
+The best way to install ghmiles is to use `pip`_ (or setuptools or distribute):
 
 ::
-  
-  pip uninstall ghmiles
-  pip uninstall github2
-  rm -rf $PATH_TO_VIRTUALENV/src/ghmiles
-  rm -rf $PATH_TO_VIRTUALENV/src/github2
 
-The last two steps are required if you want to reinstall or upgrade ghmiles.
+  $ pip install ghmiles 
+  
+This will install ghmiles and python-github2.
 
 .. _`pip`: http://pypi.python.org/pypi/pip
 
-Generating Milestone Model
---------------------------
+Generating a Milestone Model
+----------------------------
 
-TBD
+To get a list of milestones from a GitHub project:
 
-Generating HTML Page
---------------------
+::
 
-TBD
+  >>> import ghmiles
+  >>> milestones = ghmiles.get_milestones(project='bartdag/py4j',milestone_regex=ghmiles.MILESTONE_LABEL_V)
+  >>> milestone = milestones.next()                                                                                                                                 
+  >>> milestone.title                                                                                                                                               
+  u'v0.7'                                                                                                                                                           
+  >>> milestone.total                                                                                                                                               
+  7                                                                                                                                                                 
+  >>> milestone.closed                                                                                                                                              
+  0                                                                                                                                                                 
+  >>> milestone.opened                                                                                                                                              
+  7                                                                                                                                                                 
+  >>> milestone.progress                                                                                                                                            
+  0.0                                                                                                                                                               
+  >>> milestone.issues[0]                                                                                                                                           
+  <Issue: Better unit test organization for Py4J-Python>                                                                                                            
+  >>> milestone.issues[0].title                                                                                                                                     
+  u'Better unit test organization for Py4J-Python'
+
+The `milestones` variable is actually an iterator. Each time `next()` is
+called, a request is made to GitHub to retrieve all issues pertaining to this
+milestone. The issues are of type `github2.issues.Issue`. 
+
+The milestone_regex is a regular expression used to determine whether a label
+is a milestone. ghmiles provide two regular expressions:
+
+* `ghmiles.MILESTONE_LABEL_V` recognizes labels of the form vX.X where X is a
+  number.
+
+* `ghmiles.MILESTONE_LABEL_NUM` recognizes labels of the form X.X where X is a
+  number.
+
+Other interesting functions:
+
+::
+
+  >>> labels = ghmiles.get_milestone_labels('bartdag/py4j', ghmiles.MILESTONE_LABEL_V)                                                                       
+  >>> list(labels)                                                                                                                                                        
+  [u'v0.7', u'v0.6', u'v0.5', u'v0.4', u'v0.3', u'v0.2', u'v0.1']
+  >>> milestones = ghmiles.get_milestones_from_labels('bartdag/py4j', labels[-1:])                                                                         
+  >>> milestones.next()                                                                                                                                            
+  <Milestone: v0.1, 9 issues, 100.00% completed>  
+
+
+Generating a Roadmap HTML Page
+------------------------------
+
+To generate a simple roadmap such as `this one
+<http://py4j.sourceforge.net/py4j_simple_roadmap.html>`_:
+
+::
+
+  >>> milestones = ghmiles.get_milestones('bartdag/py4j', ghmiles.MILESTONE_LABEL_V)                                                                                
+  >>> ghmiles.get_simple_html_page(milestones=milestones, project_name='Py4J', save_path='simple_roadmap.html')
+
+To generate a fancy roadmap such as `this one
+<http://py4j.sourceforge.net/py4j_fancy_roadmap.html>`_:
+
+::
+
+  >>> milestones = ghmiles.get_milestones('bartdag/py4j', ghmiles.MILESTONE_LABEL_V)                               
+  >>> ghmiles.get_fancy_html_page(milestones=milestones, project='bartdag/py4j', project_name='Py4J', save_path='fancy_roadmap.html') 
 
 License
 -------

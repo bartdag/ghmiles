@@ -44,8 +44,8 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertEqual(milestones[1].total, 14)
 
     def test_get_simple_html_page(self):
-        milestones = ghmiles.get_milestones_from_labels('bartdag/py4j',
-                ['v0.2','v0.1'], True)
+        milestones = list(ghmiles.get_milestones_from_labels('bartdag/py4j',
+                ['v0.2','v0.1']))
         html = ghmiles.get_simple_html_page(milestones, 'Py4J')
         self.assertTrue(html.startswith('<!DOCTYPE html PUBLIC'))
         self.assertTrue(html.endswith('</html>'))

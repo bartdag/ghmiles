@@ -5,10 +5,35 @@
   :copyright: Copyright 2011 Barthelemy Dagenais
   :license: BSD, see LICENSE for details
 '''
+from github2.issues import Issues, Issue
 from github2.client import Github
 import datetime
 import StringIO
 import re
+
+#### MONKEY PATCH github2 ####
+
+def list_by_label(self, project, label):
+    """Get all issues for project' with label'.
+
+    ``project`` is a string with the project owner username and repository
+    name separated by ``/`` (e.g. ``ask/pygithub2``).
+    ``label`` is a string representing a label (e.g., ``bug``).
+    """
+    return self.get_values("list", project, "label", label, filter="issues",
+                           datatype=Issue)
+
+def list_labels(self, project):
+    """Get all labels for project'.
+
+    ``project`` is a string with the project owner username and repository
+    name separated by ``/`` (e.g. ``ask/pygithub2``).
+    """
+    return self.get_values("labels", project, filter="labels")
+
+Issues.list_by_label = list_by_label
+Issues.list_labels = list_labels
+
 
 #### CONSTANTS ####
 
@@ -244,7 +269,7 @@ def get_milestones(project, milestone_regex, reverse=True):
 
     return milestones
 
-def get_milestones_from_labels(project, labels, as_list=False):
+def get_milestones_from_labels(project, labels):
     '''Generates a list of milestones from the specified issue labels of a 
     github project. This can be used to generate a milestone model for recent
     milestones only.
@@ -278,6 +303,16 @@ def write_simple_html_milestones(milestones, output):
 
 def get_simple_html_page(milestones, project_name = 'GitHub Project', 
         save_path=None, header=SIMPLE_HTML_HEADER, footer=SIMPLE_HTML_FOOTER):
+    '''Generates a simple HTML page similar to a Trac roadmap.
+
+    :param milestones: a list (or iterator) of milestones.
+    :param project_name: a human-readable project name. (optional)
+    :param save_path: the output path used to save the HTML page. If None, a
+           string containing the HTML page will be returned instead.
+    :param header: the HTML header used to generate the HTML page. (optional)
+    :param footer: the HTML footer used to generate the HTML page. (optional)
+    :return: None if a save_path is provided, an HTML string otherwise.
+    '''
 
     return_value = None
 
@@ -343,10 +378,24 @@ def write_fancy_html_milestones(milestones, project, output):
             output.write(' <strong>- {0}</strong></li>\n'.format(issue.state))
         output.write('</ul>\n')
 
-def get_fancy_html_page(milestones, project, project_name = 'GitHub Project',
+def get_fancy_html_page(milestones, project, project_name = None,
         save_path=None, header=FANCY_HTML_HEADER, footer=FANCY_HTML_FOOTER):
+    '''Generates a fancy HTML page similar to a Trac roadmap.
+
+    :param milestones: a list (or iterator) of milestones.
+    :param project: a string of the form `user/project`
+    :param project_name: a human-readable project name. (optional)
+    :param save_path: the output path used to save the HTML page. If None, a
+           string containing the HTML page will be returned instead.
+    :param header: the HTML header used to generate the HTML page. (optional)
+    :param footer: the HTML footer used to generate the HTML page. (optional)
+    :return: None if a save_path is provided, an HTML string otherwise.
+    '''
 
     return_value = None
+
+    if project_name is None:
+        project_name = project.split('/')[1]
 
     if save_path is None:
         output = StringIO.StringIO()
@@ -367,4 +416,3 @@ def get_fancy_html_page(milestones, project, project_name = 'GitHub Project',
     return return_value
 
 
-#### HELPER AND POINT OF ENTRY FUNCTIONS ####
