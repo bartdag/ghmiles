@@ -10,7 +10,7 @@ github repository. The library also generates a roadmap inspired by `Trac`_.
 See the `Py4J Roadmap`_ for an example.
 
 .. _`Trac`: http://trac.edgewall.org/
-.. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_simple_roadmap.html
+.. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_fancy_roadmap.html
 
 
 Introduction
@@ -32,7 +32,7 @@ Users of ghmiles can specify which labels identify a milestone by providing a
 regular expression. 
 
 .. _`Trac roadmap`: http://trac.edgewall.org/roadmap
-.. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_simple_roadmap.html
+.. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_fancy_roadmap.html
 
 Installation
 ------------
@@ -72,17 +72,17 @@ To get a list of milestones from a GitHub project:
   >>> milestone.issues[0].title                                                                                                                                     
   u'Better unit test organization for Py4J-Python'
 
-The `milestones` variable is actually an iterator. Each time `next()` is
+The ``milestones`` variable is actually an iterator. Each time ``next()`` is
 called, a request is made to GitHub to retrieve all issues pertaining to this
-milestone. The issues are of type `github2.issues.Issue`. 
+milestone. The issues are of type ``github2.issues.Issue``. 
 
 The milestone_regex is a regular expression used to determine whether a label
 is a milestone. ghmiles provide two regular expressions:
 
-* `ghmiles.MILESTONE_LABEL_V` recognizes labels of the form vX.X where X is a
+* ``ghmiles.MILESTONE_LABEL_V`` recognizes labels of the form ``vX.X`` where X is a
   number.
 
-* `ghmiles.MILESTONE_LABEL_NUM` recognizes labels of the form X.X where X is a
+* ``ghmiles.MILESTONE_LABEL_NUM`` recognizes labels of the form ``X.X`` where X is a
   number.
 
 Other interesting functions:
