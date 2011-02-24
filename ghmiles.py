@@ -80,7 +80,7 @@ FANCY_HTML_HEADER = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   <script type="text/javascript">
     $(function() {{
       $(".details").click(function(e) {{
-        $(e.target).parent().next().toggle("blind", {{}}, 500);
+        $(e.target).parent().next().fadeToggle("fast", "linear");
       }});
     }});
   </script>
