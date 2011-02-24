@@ -1,5 +1,5 @@
-ghmiles - Github Milestone Generator
-====================================
+ghmiles - GitHub Milestones and Roadmap Generator
+===========================================
 
 :Authors:
   Barthelemy Dagenais
