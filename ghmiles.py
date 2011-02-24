@@ -5,6 +5,14 @@
   :copyright: Copyright 2011 Barthelemy Dagenais
   :license: BSD, see LICENSE for details
 '''
+# Necessary for monkey patching
+from github2.request import GithubRequest
+from github2.users import Users
+from github2.repositories import Repositories
+from github2.commits import Commits
+import time
+import sys
+
 from github2.issues import Issues, Issue
 from github2.client import Github
 import datetime
@@ -31,8 +39,77 @@ def list_labels(self, project):
     """
     return self.get_values("labels", project, filter="labels")
 
+def gh_init(self, username=None, api_token=None, debug=False,
+        requests_per_minute=None, access_token=None):
+    self.debug = debug
+    self.request = GithubRequest(username=username, api_token=api_token,
+                                 debug=self.debug,
+                                 access_token=access_token,
+                                 requests_per_minute=requests_per_minute)
+    self.issues = Issues(self.request)
+    self.users = Users(self.request)
+    self.repos = Repositories(self.request)
+    self.commits = Commits(self.request)
+
+def gr_init(self, username=None, api_token=None, url_prefix=None,
+            debug=False, requests_per_minute=None, access_token=None):
+    """
+    Make an API request.
+    """
+    self.username = username
+    self.api_token = api_token
+    self.access_token = access_token
+    self.url_prefix = url_prefix
+    self.debug = debug
+
+    if requests_per_minute is not None:
+        self.requests_per_minute = requests_per_minute
+        self.requests_count = 0
+        self.delay = 60.0
+    else:
+        self.delay = 0
+    self.last_request = datetime.datetime(1900, 1, 1)
+    if not self.url_prefix:
+        self.url_prefix = self.url_format % {
+            "github_url": self.github_url,
+            "api_version": self.api_version,
+            "api_format": self.api_format,
+        }
+
+def gr_make_request(self, path, extra_post_data=None, method="GET"):
+    # WARNING: THIS CODE IS NOT THREAD SAFE!!!!
+    new_round = False
+
+    if self.delay:
+        since_last = (datetime.datetime.now() - self.last_request)
+        since_last_seconds = (since_last.days * 24 * 60 * 60) + since_last.seconds + (since_last.microseconds/1000000.0)
+
+        if since_last_seconds > self.delay:
+            self.requests_count = 1
+            new_round = True
+        elif self.requests_count >= self.requests_per_minute:
+            duration = self.delay - since_last_seconds
+            if self.debug:
+                sys.stderr.write("delaying API call %s\n" % duration)
+            time.sleep(duration)
+            self.requests_count = 1
+            new_round = True
+        else:
+            self.requests_count += 1
+
+    extra_post_data = extra_post_data or {}
+    url = "/".join([self.url_prefix, path])
+    result = self.raw_request(url, extra_post_data, method=method)
+
+    if self.delay and new_round:
+        self.last_request = datetime.datetime.now()
+    return result
+
 Issues.list_by_label = list_by_label
 Issues.list_labels = list_labels
+GithubRequest.__init__ = gr_init
+GithubRequest.make_request = gr_make_request
+Github.__init__ = gh_init
 
 
 #### CONSTANTS ####
@@ -240,7 +317,7 @@ def label_key(label, padding=5):
 
 def get_milestone_labels(project, milestone_regex, reverse=True, github=None):
     if github is None:
-        github = Github(requests_per_second=1)
+        github = Github(requests_per_minute=60)
     labels = sorted(github.issues.list_labels(project), key=label_key, reverse=reverse)
     project_labels = (label for label in labels if milestone_regex.match(label))
     return project_labels
@@ -262,7 +339,7 @@ def get_milestones(project, milestone_regex, reverse=True):
     :return: A generator (iterator) of milestones. 
     '''
 
-    github = Github(requests_per_second=1)
+    github = Github(requests_per_minute=60)
     labels = get_milestone_labels(project, milestone_regex, reverse, github)
     milestones = (get_milestone(project, label, github) for
         label in labels) 
@@ -278,7 +355,7 @@ def get_milestones_from_labels(project, labels):
     :param labels: a list of labels used to generate milestones. 
     :return: A generator (iterator) of milestones. 
     '''
-    github = Github(requests_per_second=1)
+    github = Github(requests_per_minute=60)
     milestones = (get_milestone(project, label, github) for
         label in labels) 
 
