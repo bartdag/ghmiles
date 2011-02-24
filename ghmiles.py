@@ -336,6 +336,7 @@ def get_milestones(project, milestone_regex, reverse=True, github=None):
            representing milestones.
     :param reverse: If True (default), sort the milestones from the highest 
            number to the lowest. Oppositive if False.
+    :param github: a Github client (optional).
     :return: A generator (iterator) of milestones. 
     '''
 
@@ -354,6 +355,7 @@ def get_milestones_from_labels(project, labels, github=None):
 
     :param project: a string of the form `user/project`
     :param labels: a list of labels used to generate milestones. 
+    :param github: a Github client (optional).
     :return: A generator (iterator) of milestones. 
     '''
     if github is None:
