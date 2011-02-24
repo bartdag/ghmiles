@@ -324,11 +324,11 @@ def get_milestone_labels(project, milestone_regex, reverse=True, github=None):
 
 def get_milestone(project, milestone_label, github=None):
     if github is None:
-        github = Github(requests_per_second=1)
+        github = Github(requests_per_minute=60)
     issues = github.issues.list_by_label(project, milestone_label)
     return Milestone(milestone_label, issues)
 
-def get_milestones(project, milestone_regex, reverse=True):
+def get_milestones(project, milestone_regex, reverse=True, github=None):
     '''Generates a list of milestones for a github project
 
     :param project: a string of the form `user/project`
@@ -339,14 +339,15 @@ def get_milestones(project, milestone_regex, reverse=True):
     :return: A generator (iterator) of milestones. 
     '''
 
-    github = Github(requests_per_minute=60)
+    if github is None:
+        github = Github(requests_per_minute=60)
     labels = get_milestone_labels(project, milestone_regex, reverse, github)
     milestones = (get_milestone(project, label, github) for
         label in labels) 
 
     return milestones
 
-def get_milestones_from_labels(project, labels):
+def get_milestones_from_labels(project, labels, github=None):
     '''Generates a list of milestones from the specified issue labels of a 
     github project. This can be used to generate a milestone model for recent
     milestones only.
@@ -355,7 +356,8 @@ def get_milestones_from_labels(project, labels):
     :param labels: a list of labels used to generate milestones. 
     :return: A generator (iterator) of milestones. 
     '''
-    github = Github(requests_per_minute=60)
+    if github is None:
+        github = Github(requests_per_minute=60)
     milestones = (get_milestone(project, label, github) for
         label in labels) 
 
