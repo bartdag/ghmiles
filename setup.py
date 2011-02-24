@@ -7,7 +7,7 @@
 from setuptools import setup
 
 setup(name='ghmiles',
-      version='0.1',
+      version='0.2',
       description='GitHub Milestones',
       long_description=
       '''
