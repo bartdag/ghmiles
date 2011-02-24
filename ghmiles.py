@@ -114,10 +114,16 @@ Github.__init__ = gh_init
 
 #### CONSTANTS ####
 
-MILESTONE_LABEL_V = re.compile(r'''^v\d+\.\d+$''')
+MILESTONE_LABEL_V = re.compile(r'''^v\d+(?:\.\d+)*$''')
 '''Regex used to identify milestone labels of the form v0.1'''
 
-MILESTONE_LABEL_NUM = re.compile(r'''^\d+\.\d+$''')
+MILESTONE_LABEL_NUM = re.compile(r'''^\d+(?:\.\d+)*$''')
+'''Regex used to identify numerical milestone labels of the form 0.1'''
+
+MILESTONE_LABEL_V_RELAX = re.compile(r'''^v\d+(?:\.\d+)*''')
+'''Regex used to identify milestone labels of the form v0.1'''
+
+MILESTONE_LABEL_NUM_RELAX = re.compile(r'''^\d+(?:\.\d+)*''')
 '''Regex used to identify numerical milestone labels of the form 0.1'''
 
 SIMPLE_HTML_HEADER = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -320,6 +326,26 @@ def get_milestone_labels(project, milestone_regex, reverse=True, github=None):
         github = Github(requests_per_minute=60)
     labels = sorted(github.issues.list_labels(project), key=label_key, reverse=reverse)
     project_labels = (label for label in labels if milestone_regex.match(label))
+    return project_labels
+
+def get_intel_milestone_labels(project, reverse=True, github=None):
+    if github is None:
+        github = Github(requests_per_minute=60)
+    labels = sorted(github.issues.list_labels(project), key=label_key, reverse=reverse)
+    regexes = [MILESTONE_LABEL_NUM, MILESTONE_LABEL_NUM_RELAX,
+            MILESTONE_LABEL_V, MILESTONE_LABEL_V_RELAX]
+    max_labels = 0
+    limit = len(labels)
+    project_labels = []
+    for regex in regexes:
+        temp_labels = [label for label in labels if regex.match(label)]
+        size = len(temp_labels)
+        if size > max_labels:
+            project_labels = temp_labels
+            max_labels = size
+        if size == limit:
+            break
+
     return project_labels
 
 def get_milestone(project, milestone_label, github=None):

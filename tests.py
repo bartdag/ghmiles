@@ -26,6 +26,12 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertEqual('v0.1',labels[0])
         self.assertEqual('v0.7',labels[6])
 
+    def test_get_intel_milestone_labels(self):
+        labels = ghmiles.get_intel_milestone_labels('bartdag/py4j', False)
+        self.assertTrue(len(labels) >= 7)
+        self.assertEqual('v0.1',labels[0])
+        self.assertEqual('v0.7',labels[6])
+
     def test_get_milestones(self):
         milestones = ghmiles.get_milestones('bartdag/py4j',
                 ghmiles.MILESTONE_LABEL_V, False)
@@ -49,6 +55,8 @@ class TestMilestonesModel(unittest.TestCase):
         html = ghmiles.get_simple_html_page(milestones, 'Py4J')
         self.assertTrue(html.startswith('<!DOCTYPE html PUBLIC'))
         self.assertTrue(html.endswith('</html>'))
+
+
         
 if __name__ == '__main__':
     unittest.main()
