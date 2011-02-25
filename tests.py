@@ -27,10 +27,11 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertEqual('v0.7',labels[6])
 
     def test_get_intel_milestone_labels(self):
-        labels = ghmiles.get_intel_milestone_labels('bartdag/py4j', False)
-        self.assertTrue(len(labels) >= 7)
-        self.assertEqual('v0.1',labels[0])
-        self.assertEqual('v0.7',labels[6])
+        (project_labels, labels) = ghmiles.get_intel_milestone_labels('bartdag/py4j', False)
+        self.assertTrue(len(labels) > len(project_labels))
+        self.assertTrue(len(project_labels) >= 7)
+        self.assertEqual('v0.1',project_labels[0])
+        self.assertEqual('v0.7',project_labels[6])
 
     def test_get_milestones(self):
         milestones = ghmiles.get_milestones('bartdag/py4j',

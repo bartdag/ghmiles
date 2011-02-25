@@ -346,7 +346,7 @@ def get_intel_milestone_labels(project, reverse=True, github=None):
         if size == limit:
             break
 
-    return project_labels
+    return (project_labels, labels)
 
 def get_milestone(project, milestone_label, github=None):
     if github is None:
