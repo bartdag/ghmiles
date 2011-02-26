@@ -114,13 +114,13 @@ Github.__init__ = gh_init
 
 #### CONSTANTS ####
 
-MILESTONE_LABEL_V = re.compile(r'''^v\d+(?:\.\d+)*$''')
+MILESTONE_LABEL_V = re.compile(r'''^\w\d+(?:\.\d+)*$''')
 '''Regex used to identify milestone labels of the form v0.1'''
 
 MILESTONE_LABEL_NUM = re.compile(r'''^\d+(?:\.\d+)*$''')
 '''Regex used to identify numerical milestone labels of the form 0.1'''
 
-MILESTONE_LABEL_V_RELAX = re.compile(r'''^v\d+(?:\.\d+)*''')
+MILESTONE_LABEL_V_RELAX = re.compile(r'''^\w\d+(?:\.\d+)*''')
 '''Regex used to identify milestone labels of the form v0.1'''
 
 MILESTONE_LABEL_NUM_RELAX = re.compile(r'''^\d+(?:\.\d+)*''')
@@ -354,12 +354,13 @@ def get_milestone(project, milestone_label, github=None):
     issues = github.issues.list_by_label(project, milestone_label)
     return Milestone(milestone_label, issues)
 
-def get_milestones(project, milestone_regex, reverse=True, github=None):
+def get_milestones(project, milestone_regex=None, reverse=True, github=None):
     '''Generates a list of milestones for a github project
 
     :param project: a string of the form `user/project`
     :param milestone_regex: a regular expression used to identify the labels
-           representing milestones.
+           representing milestones. If the regex is not provided, ghmiles 
+           tries to infer the format of the milestone labels.
     :param reverse: If True (default), sort the milestones from the highest 
            number to the lowest. Oppositive if False.
     :param github: a Github client (optional).
@@ -368,7 +369,14 @@ def get_milestones(project, milestone_regex, reverse=True, github=None):
 
     if github is None:
         github = Github(requests_per_minute=60)
-    labels = get_milestone_labels(project, milestone_regex, reverse, github)
+
+    if milestone_regex:
+        labels = get_milestone_labels(project, milestone_regex, reverse, github)
+    else:
+        (labels, all_labels) = get_intel_milestone_labels(project, reverse, github)
+        if not labels:
+            labels = all_labels
+
     milestones = (get_milestone(project, label, github) for
         label in labels) 
 

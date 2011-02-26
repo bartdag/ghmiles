@@ -55,7 +55,7 @@ To get a list of milestones from a GitHub project:
 ::
 
   >>> import ghmiles
-  >>> milestones = ghmiles.get_milestones(project='bartdag/py4j',milestone_regex=ghmiles.MILESTONE_LABEL_V)
+  >>> milestones = ghmiles.get_milestones(project='bartdag/py4j')
   >>> milestone = milestones.next()                                                                                                                                 
   >>> milestone.title                                                                                                                                               
   u'v0.7'                                                                                                                                                           
@@ -74,18 +74,37 @@ To get a list of milestones from a GitHub project:
 
 The ``milestones`` variable is actually an iterator. Each time ``next()`` is
 called, a request is made to GitHub to retrieve all issues pertaining to this
-milestone. The issues are of type ``github2.issues.Issue``. 
+milestone. The issues are of type ``github2.issues.Issue``. ghmiles tries to
+infer the labels that represent milestones (e.g., 1.1.1 or M2.1). 
 
-The milestone_regex is a regular expression used to determine whether a label
-is a milestone. ghmiles provide two regular expressions:
+If ghmiles fail to recognize a milestone labels, the user can provide a regular
+expression used to determine whether a label is a milestone. 
+
+::
+
+  >>> import ghmiles
+  >>> milestones = ghmiles.get_milestones(project='bartdag/py4j',milestone_regex=ghmiles.MILESTONE_LABEL_V)
+  >>> milestone = milestones.next()                                                                                                                                 
+  >>> milestone.title                                                                                                                                               
+  u'v0.7'   
+
+ghmiles provide four regular expressions:
 
 * ``ghmiles.MILESTONE_LABEL_V`` recognizes labels of the form ``vX.X`` where X is a
-  number.
+  number, and v is any word characters.
 
 * ``ghmiles.MILESTONE_LABEL_NUM`` recognizes labels of the form ``X.X`` where X is a
   number.
 
-Other interesting functions:
+* ``ghmiles.MILESTONE_LABEL_V_RELEAX`` recognizes labels of the form ``vX.X
+  Title here`` where X is a number, and v is any word characters. It allows any
+  content to be present after the milestone number.
+
+* ``ghmiles.MILESTONE_LABEL_NUM_RELAX`` recognizes labels of the form ``X.X
+  Title here`` where X is a number. It allows any content ot be present after
+  the milestone number.
+
+Finally, these are other interesting functions provided by ghmiles:
 
 ::
 

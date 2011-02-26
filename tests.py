@@ -44,6 +44,18 @@ class TestMilestonesModel(unittest.TestCase):
         issues_title = (issue.title for issue in milestone1.issues)
         self.assertTrue(u'Write a getting started tutorial' in issues_title)
 
+    def test_get_milestones_without_regex(self):
+        milestones = list(ghmiles.get_milestones('bartdag/py4j', 
+            reverse=False))
+        milestone1 = milestones[0]
+        self.assertEqual(milestone1.title, 'v0.1')
+        self.assertAlmostEqual(milestone1.progress, 100.0)
+        self.assertEqual(milestone1.total, 9)
+        self.assertEqual(milestone1.opened, 0)
+        issues_title = (issue.title for issue in milestone1.issues)
+        self.assertTrue(u'Write a getting started tutorial' in issues_title)
+        self.assertTrue(len(milestones) >= 7)
+
     def test_get_milestones_from_labels(self):
         milestones = list(ghmiles.get_milestones_from_labels('bartdag/py4j',
                 ['v0.2','v0.4']))
