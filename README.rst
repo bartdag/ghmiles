@@ -3,7 +3,7 @@ ghmiles - GitHub Milestones and Roadmap Generator
 
 :Authors:
   Barthelemy Dagenais
-:Version: 0.1
+:Version: 0.2
 
 This is a Python library that generates a milestone model from the issues of a
 github repository. The library also generates a roadmap inspired by `Trac`_.
