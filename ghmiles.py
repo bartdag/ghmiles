@@ -1,11 +1,12 @@
-''' 
+'''
   ghmiles generates a milestones model from the list of issues in a github
-  repository. 
+  repository.
 
   :copyright: Copyright 2011 Barthelemy Dagenais
   :license: BSD, see LICENSE for details
 '''
 # Necessary for monkey patching
+from __future__ import unicode_literals
 from github2.request import GithubRequest
 from github2.users import Users
 from github2.repositories import Repositories
@@ -21,6 +22,8 @@ import re
 
 #### MONKEY PATCH github2 ####
 
+# No longer necessary, but still nice to have since github2 is missing this
+# feature.
 def list_by_label(self, project, label):
     """Get all issues for project' with label'.
 
@@ -31,6 +34,7 @@ def list_by_label(self, project, label):
     return self.get_values("list", project, "label", label, filter="issues",
                            datatype=Issue)
 
+
 def list_labels(self, project):
     """Get all labels for project'.
 
@@ -38,6 +42,7 @@ def list_labels(self, project):
     name separated by ``/`` (e.g. ``ask/pygithub2``).
     """
     return self.get_values("labels", project, filter="labels")
+
 
 def gh_init(self, username=None, api_token=None, debug=False,
         requests_per_minute=None, access_token=None):
@@ -50,6 +55,7 @@ def gh_init(self, username=None, api_token=None, debug=False,
     self.users = Users(self.request)
     self.repos = Repositories(self.request)
     self.commits = Commits(self.request)
+
 
 def gr_init(self, username=None, api_token=None, url_prefix=None,
             debug=False, requests_per_minute=None, access_token=None):
@@ -76,13 +82,15 @@ def gr_init(self, username=None, api_token=None, url_prefix=None,
             "api_format": self.api_format,
         }
 
+
 def gr_make_request(self, path, extra_post_data=None, method="GET"):
     # WARNING: THIS CODE IS NOT THREAD SAFE!!!!
     new_round = False
 
     if self.delay:
         since_last = (datetime.datetime.now() - self.last_request)
-        since_last_seconds = (since_last.days * 24 * 60 * 60) + since_last.seconds + (since_last.microseconds/1000000.0)
+        since_last_seconds = (since_last.days * 24 * 60 * 60) + \
+                since_last.seconds + (since_last.microseconds / 1000000.0)
 
         if since_last_seconds > self.delay:
             self.requests_count = 1
@@ -114,6 +122,9 @@ Github.__init__ = gh_init
 
 #### CONSTANTS ####
 
+BY_LABEL = 1
+BY_TAG = 2
+
 MILESTONE_LABEL_V = re.compile(r'''^\w\d+(?:\.\d+)*$''')
 '''Regex used to identify milestone labels of the form v0.1'''
 
@@ -126,7 +137,8 @@ MILESTONE_LABEL_V_RELAX = re.compile(r'''^\w\d+(?:\.\d+)*''')
 MILESTONE_LABEL_NUM_RELAX = re.compile(r'''^\d+(?:\.\d+)*''')
 '''Regex used to identify numerical milestone labels of the form 0.1'''
 
-SIMPLE_HTML_HEADER = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+SIMPLE_HTML_HEADER = \
+'''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
@@ -173,7 +185,7 @@ FANCY_HTML_HEADER = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     width: 960px;
     font-family: Futura, "Century Gothic", AppleGothic, sans-serif;
   }}
- 
+
   h1 {{
     color: #1049A9;
   }}
@@ -215,7 +227,7 @@ FANCY_HTML_HEADER = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     font-size: 0.7em;
     font-style: italic;
   }}
-  
+
   .tickets dt {{
     display: inline;
     margin-left: 1em;
@@ -264,6 +276,33 @@ FANCY_HTML_FOOTER = '''
 
 #### MILESTONE MODEL #####
 
+# Labels/Tags Queries
+labels_get = lambda g, p: g.issues.list_labels(p)
+tags_get = lambda g, p: (g.repos.tags(p)).items()
+
+labels_key = lambda l: l
+tags_key = lambda t: t[0]
+
+labels_sort_key = lambda l: label_key(l)
+tags_sort_key = lambda t: label_key(t[0])
+
+
+# Utility functions
+def before(date1, date2):
+    if date1 and date2:
+        return date1 < date2
+    else:
+        return False
+
+
+def between(date1, date2, date3):
+    if date1 and date2 and date3:
+        return date1 < date2 < date3
+    else:
+        return False
+
+
+# Milestone model
 class Milestone(object):
 
     def __init__(self, title, issues):
@@ -273,16 +312,27 @@ class Milestone(object):
         self.total = len(issues)
         self.opened = sum((1 for issue in issues if issue.state == 'open'))
         self.closed = self.total - self.opened
-        self.progress = float(self.closed) * 100.0 / float(self.total)
+        if self.total == 0:
+            self.progress = 0
+        else:
+            self.progress = float(self.closed) * 100.0 / float(self.total)
 
     def __repr__(self):
         return '<Milestone: {0}, {1} issues, {2:.2f}% completed>'.format(
                 self.title, self.total, self.progress)
 
+
+def get_github(github=None):
+    if github is None:
+        return Github(requests_per_minute=60)
+    else:
+        return github
+
+
 def label_key(label, padding=5):
     '''Returns a padded key from a label representing a milestone number.
     All parts of a label that are numbers are padded so that alphabetical
-    sorting can work as expected (e.g., '2.0' < '11.0'). 
+    sorting can work as expected (e.g., '2.0' < '11.0').
 
     For example, this function will return 'v00001.00022e-00123b' if label =
     'v1.22e-123b'.
@@ -294,7 +344,7 @@ def label_key(label, padding=5):
     '''
     key = prefix = ''
     components = []
-   
+
     in_prefix = True
     current_number = current_suffix = ''
 
@@ -317,28 +367,36 @@ def label_key(label, padding=5):
 
     key = prefix
     for component in components:
-        key += component[0].rjust(padding,'0') + component[1]
+        key += component[0].rjust(padding, '0') + component[1]
 
     return key
 
-def get_milestone_labels(project, milestone_regex, reverse=True, github=None):
-    if github is None:
-        github = Github(requests_per_minute=60)
-    labels = sorted(github.issues.list_labels(project), key=label_key, reverse=reverse)
-    project_labels = (label for label in labels if milestone_regex.match(label))
+
+def get_milestone_labels(project, milestone_regex, reverse=True, github=None,
+        labels_func=labels_get, key_func=labels_key,
+        key_sort_func=labels_sort_key):
+    github = get_github(github)
+    labels = sorted(labels_func(github, project), key=key_sort_func,
+                    reverse=reverse)
+    project_labels = (label for label in labels
+                          if milestone_regex.match(key_func(label)))
     return project_labels
 
-def get_intel_milestone_labels(project, reverse=True, github=None):
-    if github is None:
-        github = Github(requests_per_minute=60)
-    labels = sorted(github.issues.list_labels(project), key=label_key, reverse=reverse)
+
+def get_intel_milestone_labels(project, reverse=True, github=None,
+        labels_func=labels_get, key_func=labels_key,
+        key_sort_func=labels_sort_key):
+    github = get_github(github)
+    labels = sorted(labels_func(github, project), key=key_sort_func,
+                    reverse=reverse)
     regexes = [MILESTONE_LABEL_NUM, MILESTONE_LABEL_NUM_RELAX,
             MILESTONE_LABEL_V, MILESTONE_LABEL_V_RELAX]
     max_labels = 0
     limit = len(labels)
     project_labels = []
     for regex in regexes:
-        temp_labels = [label for label in labels if regex.match(label)]
+        temp_labels = \
+                [label for label in labels if regex.match(key_func(label))]
         size = len(temp_labels)
         if size > max_labels:
             project_labels = temp_labels
@@ -348,56 +406,127 @@ def get_intel_milestone_labels(project, reverse=True, github=None):
 
     return (project_labels, labels)
 
-def get_milestone(project, milestone_label, github=None):
-    if github is None:
-        github = Github(requests_per_minute=60)
-    issues = github.issues.list_by_label(project, milestone_label)
-    return Milestone(milestone_label, issues)
 
-def get_milestones(project, milestone_regex=None, reverse=True, github=None):
-    '''Generates a list of milestones for a github project
+def get_all_issues(project, github=None):
+    github = get_github(github)
+    issues = github.issues.list(project, state='open')
+    issues += github.issues.list(project, state='closed')
+    return issues
+
+
+def get_milestone_from_label(project, milestone_label, issues, github=None):
+    github = get_github(github)
+    milestone_issues = [issue for issue in issues if milestone_label in
+            issue.labels]
+    return Milestone(milestone_label, milestone_issues)
+
+
+def get_complete_tag(project, tag, github=None):
+    github = get_github(github)
+    commit = github.commits.show(project, sha=tag[1])
+    return (tag, commit)
+
+
+def get_milestone_from_tag(project, previous_tag, milestone_tag, issues,
+        delay=2):
+    if previous_tag is not None and milestone_tag is not None:
+        # First milestone
+        lower_bound_date = previous_tag[1].committed_date +\
+                datetime.timedelta(hours=delay)
+        upper_bound_date = milestone_tag[1].committed_date +\
+                datetime.timedelta(hours=delay)
+        milestone_issues = [issue for issue in issues if
+                between(lower_bound_date, issue.closed_at, upper_bound_date)]
+    elif milestone_tag is not None:
+        # Intermediate milestone
+        upper_bound_date = milestone_tag[1].committed_date +\
+                datetime.timedelta(hours=delay)
+        milestone_issues = [issue for issue in issues if
+                before(issue.closed_at, upper_bound_date)]
+    else:
+        # Last milestone
+        lower_bound_date = previous_tag[1].committed_date +\
+                datetime.timedelta(hours=delay)
+        milestone_issues = [issue for issue in issues if
+                issue.state == 'open' or
+                before(lower_bound_date, issue.closed_at)]
+
+    return Milestone('current', milestone_issues)
+
+
+def get_milestones(project, milestone_regex=None, reverse=True, github=None,
+        milestone_type=BY_LABEL):
+    '''Generates a list of milestones for a github project using issue labels.
 
     :param project: a string of the form `user/project`
     :param milestone_regex: a regular expression used to identify the labels
-           representing milestones. If the regex is not provided, ghmiles 
+           representing milestones. If the regex is not provided, ghmiles
            tries to infer the format of the milestone labels.
-    :param reverse: If True (default), sort the milestones from the highest 
+    :param reverse: If True (default), sort the milestones from the highest
            number to the lowest. Oppositive if False.
     :param github: a Github client (optional).
-    :return: A generator (iterator) of milestones. 
+    :param milestone_type: Strategy to use to find milestones. Use
+           ghmiles.BY_LABEL to rely on issue labels, or ghmiles.BY_TAG to rely
+           on the tags' date.
+    :return: A generator (iterator) of milestones.
     '''
 
-    if github is None:
-        github = Github(requests_per_minute=60)
+    github = get_github(github)
+
+    if milestone_type == BY_LABEL:
+        labels_func = labels_get
+        key_func = labels_key
+        key_sort_func = labels_sort_key
+        miles_func = get_milestones_from_labels
+    else:
+        labels_func = tags_get
+        key_func = tags_key
+        key_sort_func = tags_sort_key
+        miles_func = get_milestones_from_tags
 
     if milestone_regex:
-        labels = get_milestone_labels(project, milestone_regex, reverse, github)
+        labels = \
+                get_milestone_labels(project, milestone_regex, reverse,
+                        github, labels_func, key_func, key_sort_func)
     else:
-        (labels, all_labels) = get_intel_milestone_labels(project, reverse, github)
+        (labels, all_labels) = \
+                get_intel_milestone_labels(project, reverse, github,
+                        labels_func, key_func, key_sort_func)
         if not labels:
             labels = all_labels
 
-    milestones = (get_milestone(project, label, github) for
-        label in labels) 
+    milestones = miles_func(project, labels, github)
 
     return milestones
 
+
 def get_milestones_from_labels(project, labels, github=None):
-    '''Generates a list of milestones from the specified issue labels of a 
+    '''Generates a list of milestones from the specified issue labels of a
     github project. This can be used to generate a milestone model for recent
     milestones only.
 
     :param project: a string of the form `user/project`
-    :param labels: a list of labels used to generate milestones. 
+    :param labels: a list of labels used to generate milestones.
     :param github: a Github client (optional).
-    :return: A generator (iterator) of milestones. 
+    :return: A generator (iterator) of milestones.
     '''
-    if github is None:
-        github = Github(requests_per_minute=60)
-    milestones = (get_milestone(project, label, github) for
-        label in labels) 
+    github = get_github(github)
+    issues = get_all_issues(project, github)
+    milestones = (get_milestone_from_label(project, label, issues, github) for
+        label in labels)
 
     return milestones
+
+
+def get_milestones_from_tags(project, tags, github=None):
+    '''TODO
+
+    :param project:
+    :param labels:
+    :param github:
+    :return:
+    '''
+    pass
 
 
 #### HTML GENERATION ####
@@ -416,7 +545,8 @@ def write_simple_html_milestones(milestones, output):
                     .format(issue.number, issue.title, issue.state))
         output.write('</ul>\n')
 
-def get_simple_html_page(milestones, project_name = 'GitHub Project', 
+
+def get_simple_html_page(milestones, project_name='GitHub Project',
         save_path=None, header=SIMPLE_HTML_HEADER, footer=SIMPLE_HTML_FOOTER):
     '''Generates a simple HTML page similar to a Trac roadmap.
 
@@ -434,7 +564,7 @@ def get_simple_html_page(milestones, project_name = 'GitHub Project',
     if save_path is None:
         output = StringIO.StringIO()
     else:
-        output = open(save_path, 'w')
+        output = open(save_path, 'w', encoding='utf-8')
 
     output.write(header.format(project_name))
 
@@ -452,7 +582,7 @@ def get_simple_html_page(milestones, project_name = 'GitHub Project',
 
 def write_fancy_html_milestones(milestones, project, output):
     for milestone in milestones:
-        new_title = milestone.title.replace('.','--')
+        new_title = milestone.title.replace('.', '--')
         progress = int(milestone.progress)
 
         output.write('<a name="{0}"></a>'.format(milestone.title))
@@ -463,7 +593,7 @@ def write_fancy_html_milestones(milestones, project, output):
           $("#progressbar{0}").progressbar({{value: {1} }});
           }});
         </script>
-        '''.format(new_title,progress))
+        '''.format(new_title, progress))
         output.write('''
         <div class="pb">
         <div id="progressbar{0}"></div>
@@ -493,7 +623,8 @@ def write_fancy_html_milestones(milestones, project, output):
             output.write(' <strong>- {0}</strong></li>\n'.format(issue.state))
         output.write('</ul>\n')
 
-def get_fancy_html_page(milestones, project, project_name = None,
+
+def get_fancy_html_page(milestones, project, project_name=None,
         save_path=None, header=FANCY_HTML_HEADER, footer=FANCY_HTML_FOOTER):
     '''Generates a fancy HTML page similar to a Trac roadmap.
 
@@ -515,7 +646,7 @@ def get_fancy_html_page(milestones, project, project_name = None,
     if save_path is None:
         output = StringIO.StringIO()
     else:
-        output = open(save_path, 'w')
+        output = open(save_path, 'w', encoding='utf-8')
 
     output.write(header.format(project_name))
 
@@ -529,5 +660,3 @@ def get_fancy_html_page(milestones, project, project_name = None,
     output.close()
 
     return return_value
-
-

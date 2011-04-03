@@ -4,7 +4,7 @@
   :copyright: Copyright 2011 Barthelemy Dagenais
   :license: BSD, see LICENSE for details
 '''
-
+from __future__ import unicode_literals
 import unittest
 import ghmiles
 
@@ -27,7 +27,8 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertEqual('v0.7',labels[6])
 
     def test_get_intel_milestone_labels(self):
-        (project_labels, labels) = ghmiles.get_intel_milestone_labels('bartdag/py4j', False)
+        (project_labels, labels) = \
+                ghmiles.get_intel_milestone_labels('bartdag/py4j', False)
         self.assertTrue(len(labels) > len(project_labels))
         self.assertTrue(len(project_labels) >= 7)
         self.assertEqual('v0.1',project_labels[0])
@@ -69,7 +70,35 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertTrue(html.startswith('<!DOCTYPE html PUBLIC'))
         self.assertTrue(html.endswith('</html>'))
 
+    def test_get_intel_milestones_tag(self):
+        (project_labels, labels) = \
+                ghmiles.get_intel_milestone_labels('bartdag/py4j', False,
+                        None, ghmiles.tags_get, ghmiles.tags_key, 
+                        ghmiles.tags_sort_key)
+        self.assertTrue(len(project_labels) >= 6)
+        self.assertEqual('0.1', project_labels[0][0])
 
+    def test_get_milestone_from_tag(self):
+        (project_labels, labels) = \
+                ghmiles.get_intel_milestone_labels('bartdag/py4j', False,
+                        None, ghmiles.tags_get, ghmiles.tags_key, 
+                        ghmiles.tags_sort_key)
+        tag1 = ghmiles.get_complete_tag('bartdag/py4j', project_labels[0])
+        tag2 = ghmiles.get_complete_tag('bartdag/py4j', project_labels[1])
+        taglast = ghmiles.get_complete_tag('bartdag/py4j', project_labels[-1])
+
+        issues = ghmiles.get_all_issues('bartdag/py4j')
+        m1 = ghmiles.get_milestone_from_tag('bartdag/py4j', None, tag1, issues)
+        m2 = ghmiles.get_milestone_from_tag('bartdag/py4j', tag1, tag2, issues)
+        mlast = ghmiles.get_milestone_from_tag('bartdag/py4j', taglast,
+                None, issues)
+        
+        # Because the timestamp is off: tickets were imported from Trac!
+        self.assertEqual(0, m1.total)
+        self.assertEqual(0, m2.total)
+        # Reasonable boundaries
+        self.assertTrue(mlast.total > 0 and mlast.total < 20)
+        
         
 if __name__ == '__main__':
     unittest.main()

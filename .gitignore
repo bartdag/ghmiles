@@ -4,3 +4,4 @@ MANIFEST
 dist/
 ghmiles.egg-info/
 tags
+.tox/

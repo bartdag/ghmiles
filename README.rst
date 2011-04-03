@@ -34,6 +34,12 @@ regular expression.
 .. _`Trac roadmap`: http://trac.edgewall.org/roadmap
 .. _`Py4J Roadmap`: http://py4j.sourceforge.net/py4j_fancy_roadmap.html
 
+Requirements
+------------
+
+ghmiles has been tested with Python 2.6 and Python 2.7. Python 3 will be
+supported once github2 will support Python 3.
+
 Installation
 ------------
 
