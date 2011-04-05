@@ -98,7 +98,21 @@ class TestMilestonesModel(unittest.TestCase):
         self.assertEqual(0, m2.total)
         # Reasonable boundaries
         self.assertTrue(mlast.total > 0 and mlast.total < 20)
+
+    def test_get_milestones_from_tags(self):
+        milestones = list(ghmiles.get_milestones('bartdag/py4j',
+                milestone_type=ghmiles.BY_TAG))
+        self.assertTrue(len(milestones) >= 7)
+        self.assertTrue(milestones[0].total > 0 and milestones[0].total < 20)
+        self.assertEqual('current', milestones[0].title)
+        self.assertEqual('0.1', milestones[-1].title)
         
+        milestones = list(ghmiles.get_milestones('bartdag/py4j',
+                reverse=False, milestone_type=ghmiles.BY_TAG))
+        self.assertTrue(len(milestones) >= 7)
+        self.assertTrue(milestones[-1].total > 0 and milestones[-1].total < 20)
+        self.assertEqual('0.1', milestones[0].title)
+        self.assertEqual('current', milestones[-1].title)
         
 if __name__ == '__main__':
     unittest.main()

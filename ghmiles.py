@@ -22,6 +22,7 @@ import re
 
 #### MONKEY PATCH github2 ####
 
+
 # No longer necessary, but still nice to have since github2 is missing this
 # feature.
 def list_by_label(self, project, label):
@@ -437,12 +438,14 @@ def get_milestone_from_tag(project, previous_tag, milestone_tag, issues,
                 datetime.timedelta(hours=delay)
         milestone_issues = [issue for issue in issues if
                 between(lower_bound_date, issue.closed_at, upper_bound_date)]
+        title = milestone_tag[0][0]
     elif milestone_tag is not None:
         # Intermediate milestone
         upper_bound_date = milestone_tag[1].committed_date +\
                 datetime.timedelta(hours=delay)
         milestone_issues = [issue for issue in issues if
                 before(issue.closed_at, upper_bound_date)]
+        title = milestone_tag[0][0]
     else:
         # Last milestone
         lower_bound_date = previous_tag[1].committed_date +\
@@ -450,8 +453,9 @@ def get_milestone_from_tag(project, previous_tag, milestone_tag, issues,
         milestone_issues = [issue for issue in issues if
                 issue.state == 'open' or
                 before(lower_bound_date, issue.closed_at)]
+        title = 'current'
 
-    return Milestone('current', milestone_issues)
+    return Milestone(title, milestone_issues)
 
 
 def get_milestones(project, milestone_regex=None, reverse=True, github=None,
@@ -477,12 +481,10 @@ def get_milestones(project, milestone_regex=None, reverse=True, github=None,
         labels_func = labels_get
         key_func = labels_key
         key_sort_func = labels_sort_key
-        miles_func = get_milestones_from_labels
     else:
         labels_func = tags_get
         key_func = tags_key
         key_sort_func = tags_sort_key
-        miles_func = get_milestones_from_tags
 
     if milestone_regex:
         labels = \
@@ -495,7 +497,11 @@ def get_milestones(project, milestone_regex=None, reverse=True, github=None,
         if not labels:
             labels = all_labels
 
-    milestones = miles_func(project, labels, github)
+    if milestone_type == BY_LABEL:
+        milestones = get_milestones_from_labels(project, labels, github)
+    else:
+        milestones = get_milestones_from_tags(project, labels, reverse, True,
+                github)
 
     return milestones
 
@@ -518,16 +524,68 @@ def get_milestones_from_labels(project, labels, github=None):
     return milestones
 
 
-def get_milestones_from_tags(project, tags, github=None):
-    '''TODO
+def get_milestones_from_tags(project, tags, reverse, include_last=True,
+        github=None):
+    '''Generates a list of milestones from the specified tags of a github
+    project. This can be used to generate a milestone model for recent tags
+    only. 
 
-    :param project:
-    :param labels:
-    :param github:
-    :return:
+    :param project: a string of the form `user/project`.
+    :param labels: a list of tags used to generate milestones.
+    :param reverse: if the tags are in reverse order.
+    :param include_last: if the last milestone (after the last tag) should be
+                         generated (default = True).
+    :param github: a Github client (optional).
+    :return: A generator (iterator) of milestones.
     '''
-    pass
+    if len(tags) == 0:
+        return []
 
+    github = get_github(github)
+    issues = get_all_issues(project, github)
+
+    if reverse:
+        return reverse_mtag_generator(project, tags, issues, include_last)
+    else:
+        return mtag_generator(project, tags, issues, include_last)
+
+def reverse_mtag_generator(project, tags, issues, include_last):
+    size = len(tags)
+    sizetolast = size-1
+    previous_tag = None
+    current_tag = get_complete_tag(project, tags[0])
+
+    if include_last:
+        milestone = get_milestone_from_tag(project, current_tag, None,
+                issues)
+        yield milestone
+
+    for index in xrange(size):
+        if index < sizetolast:
+            previous_tag = get_complete_tag(project, tags[index+1])
+        else:
+            previous_tag = None
+        milestone = get_milestone_from_tag(project, previous_tag, current_tag,
+                issues)
+        yield milestone
+        current_tag = previous_tag
+
+def mtag_generator(project, tags, issues, include_last):
+    size = len(tags)
+    previous_tag = None
+    current_tag = None
+
+    for index in xrange(size):
+        current_tag = get_complete_tag(project, tags[index])
+        milestone = get_milestone_from_tag(project, previous_tag, current_tag,
+                issues)
+        yield milestone
+        previous_tag = current_tag
+
+    if include_last:
+        milestone = get_milestone_from_tag(project, previous_tag, None,
+                issues)
+        yield milestone
 
 #### HTML GENERATION ####
 
