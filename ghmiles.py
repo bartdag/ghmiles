@@ -19,6 +19,7 @@ from github2.client import Github
 import datetime
 import StringIO
 import re
+import codecs
 
 #### MONKEY PATCH github2 ####
 
@@ -622,7 +623,7 @@ def get_simple_html_page(milestones, project_name='GitHub Project',
     if save_path is None:
         output = StringIO.StringIO()
     else:
-        output = open(save_path, 'w', encoding='utf-8')
+        output = codecs.open(save_path, 'w', encoding='utf-8')
 
     output.write(header.format(project_name))
 
@@ -704,7 +705,7 @@ def get_fancy_html_page(milestones, project, project_name=None,
     if save_path is None:
         output = StringIO.StringIO()
     else:
-        output = open(save_path, 'w', encoding='utf-8')
+        output = codecs.open(save_path, 'w', encoding='utf-8')
 
     output.write(header.format(project_name))
 

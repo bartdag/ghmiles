@@ -1,0 +1,44 @@
+#!/usr/bin/env python2
+import argparse
+import ghmiles
+from os import getcwd
+from os.path import join, normpath
+
+def main():
+    parser = argparse.ArgumentParser(description='ghmiles - GitHub Milestones'
+        'and Roadmap.')
+    parser.add_argument('project', metavar='P', help='A github project of the'
+        'form `user/project`')
+    parser.add_argument('--output', '-o', dest='output', default='.',
+        help='the directory where roadmap will be saved') 
+    parser.add_argument('--fancy', '-f', dest='fancy', default=True,
+        action='store_true', help='print a fancy roadmap (default)')
+    parser.add_argument('--simple', '-s', dest='simple', default=False,
+        action='store_true', help='print a simple roadmap')
+    parser.add_argument('--label', '-l', dest='label', default=True,
+        action='store_true', help='generate milestones from issue labels'
+        '(default)')
+    parser.add_argument('--tag', '-t', dest='tag', default=False,
+        action='store_true', help='generate milestones from tags')
+    args = parser.parse_args()
+
+    path = normpath(join(getcwd(), args.output, 'roadmap.html'))
+
+    if args.tag:
+        mtype = ghmiles.BY_TAG
+    else:
+        mtype = ghmiles.BY_LABEL
+
+    milestones = ghmiles.get_milestones(args.project, milestone_type=mtype)
+    
+    if args.simple:
+        ghmiles.get_simple_html_page(milestones, project_name=args.project,
+                save_path=path)
+    else:
+        ghmiles.get_fancy_html_page(milestones, args.project,
+                save_path=path)
+
+    print(args)
+
+if __name__ == '__main__':
+    main()

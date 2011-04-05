@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>py4j Roadmap</title>
+  <link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/ui-lightness/jquery-ui.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      $(".details").click(function(e) {
+        $(e.target).parent().next().fadeToggle("fast", "linear");
+      });
+    });
+  </script>
+  <style type="text/css">
+  #doc {
+    margin:auto;
+    width: 960px;
+    font-family: Futura, "Century Gothic", AppleGothic, sans-serif;
+  }
+
+  h1 {
+    color: #1049A9;
+  }
+
+  h2 {
+    color: #1049A9;
+    margin-top: 50px;
+  }
+
+  a {
+    color: #A65100;
+  }
+
+  a:hover {
+    color: #1049A9;
+  }
+
+  .pb {
+    width: 480px;
+    font-size: 50%;
+  }
+
+  .pb_label {
+    float: right;
+    font-size: 200%;
+    font-weight: bold;
+  }
+
+  .issues_list {
+    list-style-type: none;
+    display: none;
+  }
+
+  .issues_list li a {
+    font-weight: bold;
+  }
+
+  .tickets {
+    font-size: 0.7em;
+    font-style: italic;
+  }
+
+  .tickets dt {
+    display: inline;
+    margin-left: 1em;
+  }
+
+  .tickets dd {
+    display: inline;
+    margin: 0 1.5em 0 0.5em;
+  }
+
+  #hd, #ft {
+    height: 40px;
+  }
+
+  #ft {
+    border-top: 1px solid #ccc;
+  }
+
+  #hd {
+    text-align: center;
+  }
+  </style>
+  </head>
+  <body id="doc">
+    <div id="hd">
+      <h1>py4j Roadmap</h1>
+    </div>
+    <div id="main">
+<a name="v0.7"></a><h2>Milestone: v0.7</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--7").progressbar({value: 33 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--7"></div>
+        <div class="pb_label">33%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>4</dd>
+          <dt>active:</dt>
+          <dd>8</dd>
+          <dt>total:</dt>
+          <dd>12</dd>
+        </dl>
+        <p><a href="#v0.7" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/29">#29</a> Better unit test organization for Py4J-Python <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/40">#40</a> Find FQN based on a SimpleName <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/54">#54</a> Refactor support for custom types <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/58">#58</a> Allow extending abstract classes <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/69">#69</a> Make Py4J more pythonic <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/70">#70</a> Consistent treatment of Java exceptions <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/73">#73</a> Make pattern smartcase in help <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/81">#81</a> PEP 8 cleanups <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/82">#82</a> hasattr throws an exception in Python 3.2 <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/83">#83</a> setup.py should work for Python 3. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/84">#84</a> Support byte[] <strong>- open</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/85">#85</a> Python Proxy cannot return another Python Proxy <strong>- closed</strong></li>
+</ul>
+<a name="v0.6"></a><h2>Milestone: v0.6</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--6").progressbar({value: 100 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--6"></div>
+        <div class="pb_label">100%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>8</dd>
+          <dt>active:</dt>
+          <dd>0</dd>
+          <dt>total:</dt>
+          <dd>8</dd>
+        </dl>
+        <p><a href="#v0.6" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/72">#72</a> Move source repository to bitbucket <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/74">#74</a> Better setup.py <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/75">#75</a> python implementation for member interfaces <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/76">#76</a> infinite recursion on sending a command <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/77">#77</a> No exception thrown when address already in use. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/78">#78</a> Make Java Exception instance available on the Python side. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/79">#79</a> cannot pass Integers larger tna 32-bits to java <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/80">#80</a> Starting the GatewayServer on an ephemeral port <strong>- closed</strong></li>
+</ul>
+<a name="v0.5"></a><h2>Milestone: v0.5</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--5").progressbar({value: 100 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--5"></div>
+        <div class="pb_label">100%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>8</dd>
+          <dt>active:</dt>
+          <dd>0</dd>
+          <dt>total:</dt>
+          <dd>8</dd>
+        </dl>
+        <p><a href="#v0.5" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/23">#23</a> Support star imports and single imports. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/27">#27</a> Java Collections should play nice with Python Collections <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/35">#35</a> Filter members with gateway.help() <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/53">#53</a> Add iterator to JavaArray <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/56">#56</a> Create Eclipse update site <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/57">#57</a> Eclipse - create a GatewayServer that is automatically started. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/68">#68</a> Refactor JavaList to inherit from MutableSequence <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/71">#71</a> Fix documentation <strong>- closed</strong></li>
+</ul>
+<a name="v0.4"></a><h2>Milestone: v0.4</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--4").progressbar({value: 100 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--4"></div>
+        <div class="pb_label">100%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>14</dd>
+          <dt>active:</dt>
+          <dd>0</dd>
+          <dt>total:</dt>
+          <dd>14</dd>
+        </dl>
+        <p><a href="#v0.4" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/24">#24</a> Support set field <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/30">#30</a> Fix GatewayServer.acceptOnlyOne <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/34">#34</a> Sort members by name in gateway.help <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/38">#38</a> Show Java Exception Stack Trace <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/39">#39</a> Allow None as a parameter in method calls <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/42">#42</a> Iterator should be converted to JavaIterator on Python <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/43">#43</a> Refactor GatewayConnection initialization <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/45">#45</a> Create unified control over connection lifetime <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/46">#46</a> Cannot exit Python without shutting down CallbackServer <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/47">#47</a> Improper CallbackServer shutdown prevents Python program from exiting <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/48">#48</a> jvm property does not allow multi-threaded access <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/51">#51</a> gateway.jvm does not always work after a Java Exception is thrown. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/52">#52</a> \r and unicode handling <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/55">#55</a> EntryPoint is no longer callable after an exception is thrown by a callback <strong>- closed</strong></li>
+</ul>
+<a name="v0.3"></a><h2>Milestone: v0.3</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--3").progressbar({value: 100 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--3"></div>
+        <div class="pb_label">100%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>11</dd>
+          <dt>active:</dt>
+          <dd>0</dd>
+          <dt>total:</dt>
+          <dd>11</dd>
+        </dl>
+        <p><a href="#v0.3" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/12">#12</a> Supporting callbacks <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/17">#17</a> Support python lists as argument to java methods <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/22">#22</a> Support for Arrays <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/26">#26</a> Support for set <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/31">#31</a> Py4J Python is not thread safe <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/32">#32</a> Investigate Protobuf <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/33">#33</a> Enable multiple threads/socket connections <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/36">#36</a> Remove if structure <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/37">#37</a> Refactoring of memory management <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/41">#41</a> gateway.shutdown does not work <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/44">#44</a> Update Documentation for 0.3 <strong>- closed</strong></li>
+</ul>
+<a name="v0.2"></a><h2>Milestone: v0.2</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--2").progressbar({value: 100 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--2"></div>
+        <div class="pb_label">100%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>12</dd>
+          <dt>active:</dt>
+          <dd>0</dd>
+          <dt>total:</dt>
+          <dd>12</dd>
+        </dl>
+        <p><a href="#v0.2" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/8">#8</a> Do not return anything when calling a void method. <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/9">#9</a> Supporting constructors <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/10">#10</a> Supporting fields <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/13">#13</a> Supporting Map <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/14">#14</a> Protocol Refactoring <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/16">#16</a> Refactor stop / shutdown / close <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/18">#18</a> Document pavement.py and build.xml <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/19">#19</a> New Reflection Infrastructure <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/20">#20</a> Flexible connection/memory management <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/21">#21</a> Fix help system <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/25">#25</a> Support methods hidden by fields <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/28">#28</a> Allow arbitrary string length <strong>- closed</strong></li>
+</ul>
+<a name="v0.1"></a><h2>Milestone: v0.1</h2>
+
+        <script type="text/javascript">
+        $(function() {
+          $("#progressbarv0--1").progressbar({value: 100 });
+          });
+        </script>
+        
+        <div class="pb">
+        <div id="progressbarv0--1"></div>
+        <div class="pb_label">100%</div>
+        </div>
+        
+        <dl class="tickets">
+          <dt>Number of tickets:</dt><dd></dd>
+          <dt>closed:</dt>
+          <dd>9</dd>
+          <dt>active:</dt>
+          <dd>0</dd>
+          <dt>total:</dt>
+          <dd>9</dd>
+        </dl>
+        <p><a href="#v0.1" class="details">List of Issues:</a></p>
+<ul class="issues_list">
+<li><a href="https://github.com/bartdag/py4j/issues/1">#1</a> Improve default values <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/2">#2</a> Improve Java Gateway Server <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/3">#3</a> Improve Testing Framework <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/4">#4</a> Implement List <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/5">#5</a> API Documentation Generation with Py4J and Java <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/6">#6</a> Release Manager Script <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/7">#7</a> Write a getting started tutorial <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/11">#11</a> Write build instructions <strong>- closed</strong></li>
+<li><a href="https://github.com/bartdag/py4j/issues/15">#15</a> Write a F.A.Q. <strong>- closed</strong></li>
+</ul>
+
+    </div>
+    <div id="ft">
+    <p>
+    Generated by <a href="https://github.com/bartdag/ghmiles">ghmiles</a>
+    on 2011-04-05 12:58:15.668361.
+    </p>
+    <p>
+    <a href="http://validator.w3.org/check?uri=referer"><img
+        src="http://www.w3.org/Icons/valid-xhtml10"
+        alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
+    </p>
+    </div>
+  </body>
+</html>
