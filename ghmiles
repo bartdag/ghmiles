@@ -4,13 +4,16 @@ import ghmiles
 from os import getcwd
 from os.path import join, normpath
 
-def main():
+
+def build_parser():
     parser = argparse.ArgumentParser(description='ghmiles - GitHub Milestones'
         'and Roadmap.')
     parser.add_argument('project', metavar='P', help='A github project of the'
         'form `user/project`')
     parser.add_argument('--output', '-o', dest='output', default='.',
-        help='the directory where roadmap will be saved') 
+        help='the directory where roadmap will be saved')
+    parser.add_argument('--file', dest='file', default='roadmap.html',
+        help='the file name of the roadmap')
     parser.add_argument('--fancy', '-f', dest='fancy', default=True,
         action='store_true', help='print a fancy roadmap (default)')
     parser.add_argument('--simple', '-s', dest='simple', default=False,
@@ -20,9 +23,19 @@ def main():
         '(default)')
     parser.add_argument('--tag', '-t', dest='tag', default=False,
         action='store_true', help='generate milestones from tags')
+    parser.add_argument('--stdout', dest='stdout', default=False,
+        action='store_true', help='print the report on the stdout.')
+    return parser
+
+
+def main():
+    parser = build_parser()
     args = parser.parse_args()
 
-    path = normpath(join(getcwd(), args.output, 'roadmap.html'))
+    if args.stdout:
+        path = None
+    else:
+        path = normpath(join(getcwd(), args.output, args.file))
 
     if args.tag:
         mtype = ghmiles.BY_TAG
@@ -30,15 +43,17 @@ def main():
         mtype = ghmiles.BY_LABEL
 
     milestones = ghmiles.get_milestones(args.project, milestone_type=mtype)
-    
+
     if args.simple:
-        ghmiles.get_simple_html_page(milestones, project_name=args.project,
-                save_path=path)
+        output = ghmiles.get_simple_html_page(milestones,
+                project_name=args.project, save_path=path)
     else:
-        ghmiles.get_fancy_html_page(milestones, args.project,
+        output = ghmiles.get_fancy_html_page(milestones, args.project,
                 save_path=path)
 
-    print(args)
+    if args.stdout:
+        print(output)
+
 
 if __name__ == '__main__':
     main()

@@ -593,7 +593,7 @@ def mtag_generator(project, tags, issues, include_last):
 def write_simple_html_milestones(milestones, output):
     for milestone in milestones:
         output.write('<h2>Milestone: {0}</h2>\n'.format(milestone.title))
-        output.write('<p><strong>Progress: {0}%</strong></p>'
+        output.write('<p><strong>Progress: {0:.2f}%</strong></p>'
                 .format(milestone.progress))
         output.write('<p><em>Number of tickets: ')
         output.write('closed: {0} active: {1} total: {2}</em></p>\n'
@@ -649,7 +649,7 @@ def write_fancy_html_milestones(milestones, project, output):
         output.write('''
         <script type="text/javascript">
         $(function() {{
-          $("#progressbar{0}").progressbar({{value: {1} }});
+          $("#progressbar{0}").progressbar({{value: {1:.2f} }});
           }});
         </script>
         '''.format(new_title, progress))
